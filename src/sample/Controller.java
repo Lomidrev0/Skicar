@@ -64,6 +64,7 @@ public class Controller {
 
     public void initialize() {
 
+
         ObservableList<String> options = FXCollections.observableArrayList("Pen", "Highlighter", "spray", "crayon", "Text Writer");
         comboBox.setItems(options);
         ObservableList<String> options2 = FXCollections.observableArrayList("Line", "Circle", "Elipse", "square");
@@ -136,8 +137,10 @@ public class Controller {
                     g.setFill(colorPicker.getValue());
                     g.fillOval(x, y, size, size);
                 }
+
             });
         }
+
 
     }
 
@@ -183,6 +186,7 @@ public class Controller {
 
 
     public void save(){
+        savem();
         try {
             WritableImage snapshot =canvas.snapshot(null,null);
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null),"png",new File("Paint.png"));
@@ -196,6 +200,8 @@ public class Controller {
         Platform.exit();
     }
 
+
+
     public void mouseMoved(javafx.scene.input.MouseEvent mouseEvent ) {
 
             String []x=String.valueOf(mouseEvent.getX()).split("\\.");
@@ -203,4 +209,13 @@ public class Controller {
             lx.setText("X: "+x[0]);
             ly.setText("Y: "+y[0]);
     }
+    Paint dd;
+    public void savem(){
+        GraphicsContext g = canvas.getGraphicsContext2D();
+        //System.out.println(g.fil);
+
+    }
+
+
+
 }
