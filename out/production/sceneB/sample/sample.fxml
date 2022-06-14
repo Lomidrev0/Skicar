@@ -13,24 +13,40 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"  prefHeight="600.0" prefWidth="600.0" styleClass="app" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="600.0" styleClass="app" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <top>
         <VBox fx:id="vbox" styleClass="vbox" BorderPane.alignment="CENTER">
             <MenuBar styleClass="mbar">
+
                 <Menu text="File">
-                    <MenuItem onAction="#save" text="Save" />
-               <MenuItem onAction="#save" text="Save as" />
-               <MenuItem onAction="#save" text="Open" />
-               <MenuItem onAction="#save" text="Clear workspace" />
-                    <MenuItem onAction="#exit" text="Exit" />
+                   <MenuItem onAction="#save" text="Save" />
+                   <MenuItem onAction="#save" text="Save as" />
+                   <MenuItem onAction="#load" text="Open" />
+                   <MenuItem onAction="#clearWorkspace" text="Clear workspace" />
+                   <MenuItem onAction="#exit" text="Exit" />
+                </Menu>
+                <Menu>
+                    <graphic>
+                        <Button mnemonicParsing="false" onAction="#undo" text="Undo" />
+                        </graphic>
+                </Menu>
+                <Menu>
+                    <graphic>
+                        <Button mnemonicParsing="false" onAction="#redo" text="Button" />
+                    </graphic>
+
                 </Menu>
             </MenuBar>
+
+
+
 
             <ToolBar styleClass="vbox">
                 <HBox alignment="CENTER" spacing="5">
