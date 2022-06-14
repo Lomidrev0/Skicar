@@ -58,17 +58,16 @@ public class Controller {
     @FXML
     private ImageView undo;
 
-
     public boolean pen = true;
     public static int history=0;
-
-
+    public int u=0;
+    public int r=0;
 
     public void initialize() {
         Image i=new Image(System.getProperty("user.dir")+"\\src\\res\\icons8-undo-60.png");
         Image i0=new Image(System.getProperty("user.dir")+"\\src\\res\\icons8-redo-60.png");
-        undo.setImage(i);
-        redo.setImage(i0);
+        //undo.setImage(i);
+        //redo.setImage(i0);
         GraphicsContext g = canvas.getGraphicsContext2D();
         ObservableList<String> options = FXCollections.observableArrayList("Pen", "Highlighter", "spray", "crayon", "Text Writer");
         comboBox.setItems(options);
@@ -108,7 +107,8 @@ public class Controller {
                     history();
                 }
             });
-            history();
+
+
         } else {
             canvas.setOnMouseDragged(e -> {
                 double size = Double.parseDouble(brushSize.getText());
@@ -133,12 +133,13 @@ public class Controller {
 
                 if (eraser.isSelected()) {
                     g.clearRect(x, y, size, size);
+                    history();
                 } else {
                     g.setFill(colorPicker.getValue());
                     g.fillOval(x, y, size, size);
+                    history();
                 }
             });
-            history();
         }
     }
 
@@ -146,12 +147,10 @@ public class Controller {
         if (comboBox3.getValue().equals("Circle pen")) {
             pen = false;
             initialize();
-            //System.out.println(comboBox3.getValue());
         }
         if (comboBox3.getValue().equals("Square pen")) {
             pen = true;
             initialize();
-            //System.out.println(comboBox3.getValue());
         }
     }
    /** public void zoomIn(){
@@ -180,7 +179,6 @@ public class Controller {
     }
 
     public void save(){
-        //System.out.println("Working Directory = " + System.getProperty("user.dir"));
         try {
             WritableImage snapshot =canvas.snapshot(null,null);
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null),"png",new File(System.getProperty("user.dir")+"\\src\\sample\\saved\\Paint.png"));
@@ -190,67 +188,120 @@ public class Controller {
         }
     }
     public void history(){
-        history++;
-        try {
-            if (history<=20){
-                WritableImage snapshot =canvas.snapshot(null,null);
-                ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null),"png",new File(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+history+".png"));
-            }
+
+        //System.out.println(u-r+"=="+0);
+            if (u-r==0){
+                history++;
+
+                    System.out.println(history+"hgyfcvgtfcvg");
+                    try {
+                        if (history<=20){
+                            WritableImage snapshot =canvas.snapshot(null,null);
+                            ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null),"png",new File(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+history+".png"));
+                        }
+                        else {
+                            try {
+                                Files.deleteIfExists(
+                                        Paths.get(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+(history-20)+".png"));
+                            }
+                            catch (NoSuchFileException e) {
+                                System.out.println("No such file/directory exists");
+                            }
+                            WritableImage snapshot =canvas.snapshot(null,null);
+                            ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null),"png",new File(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+history+".png"));
+                        }
+                    }catch (Exception e){
+                        System.out.println("Failed to save image"+e);
+                    }
+                }
+
+
             else {
+                System.out.println("cscscscscscscscscscscscscs: ");
+            for (int i = (history-u+r); i <= history; i++) {
                 try {
                     Files.deleteIfExists(
-                            Paths.get(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+(history-20)+".png"));
+                            Paths.get(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+(i)+".png"));
+
                 }
-                catch (NoSuchFileException e) {
-                    System.out.println("No such file/directory exists");
+                catch (IOException e) {
+                    e.printStackTrace();
                 }
-                WritableImage snapshot =canvas.snapshot(null,null);
-                ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null),"png",new File(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+history+".png"));
             }
-        }catch (Exception e){
-            System.out.println("Failed to save image"+e);
+            history=history-u+r-1;
+            u=0;
+            r=0;
+                System.out.println(history);
+           history();
+            }
         }
-    }
+
 
     public void load(){
         GraphicsContext g = canvas.getGraphicsContext2D();
-        Image image= new Image(getClass().getResourceAsStream("Paint.png"));
+        Image image= new Image("C:\\Users\\knutd\\IdeaProjects\\sceneB\\src\\Paint.jpg");
         g.drawImage(image,0,0,600,600);
     }
 
     public void exit(){
-        for (int i = 0; i <20 ; i++) {
-            try {
-                Files.deleteIfExists(
-                        Paths.get(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+(history-i)+".png"));
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        clearH();
         Platform.exit();
     }
 
     public static void clearH(){
-        for (int i = 0; i <20 ; i++) {
-            try {
-                Files.deleteIfExists(
-                        Paths.get(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+(history-i)+".png"));
+        if (history<=20){
+            for (int i = 0; i <history ; i++) {
+                try {
+                    Files.deleteIfExists(
+                            Paths.get(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+(history-i)+".png"));
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            catch (IOException e) {
-                e.printStackTrace();
+        }
+        else {
+            for (int i = 0; i <20 ; i++) {
+                try {
+                    Files.deleteIfExists(
+                            Paths.get(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+(history-i)+".png"));
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
     public void undo(){
 
+        GraphicsContext g = canvas.getGraphicsContext2D();
+       // System.out.println(r);
+        if (history-u+r>1){
+            u++;
+            clearWorkspace();
+            Image image= new Image(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+((history-u)+r)+".png");
+            g.drawImage(image,0,0,image.getHeight(),image.getWidth());
+        }
+        //System.out.println("undo "+u+"u ,"+r+"r ,"+"an: "+((history-u)+r)+"|h: "+history);
     }
     public void redo(){
 
+        GraphicsContext g = canvas.getGraphicsContext2D();
+        //System.out.println((history-u)+r);
+        if ((history-u+r+1)<=history&&u!=0){
+            r++;
+            clearWorkspace();
+            Image image= new Image(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+((history-u)+r)+".png");
+            g.drawImage(image,0,0,image.getHeight(),image.getWidth());
+        }
+        //System.out.println("redo "+u+"u ,"+r+"r ,"+"an: "+((history-u)+r)+"|h: "+history);
+    }
+    public void clearWorkspace(){
+        GraphicsContext g = canvas.getGraphicsContext2D();
+        g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
     public void mouseMoved(javafx.scene.input.MouseEvent mouseEvent ) {
-
             String []x=String.valueOf(mouseEvent.getX()).split("\\.");
             String []y=String.valueOf(mouseEvent.getY()).split("\\.");
             lx.setText("X: "+x[0]);

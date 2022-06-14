@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
@@ -28,17 +29,17 @@
                    <MenuItem onAction="#save" text="Save" />
                    <MenuItem onAction="#save" text="Save as" />
                    <MenuItem onAction="#load" text="Open" />
-                   <MenuItem onAction="#save" text="Clear workspace" />
+                   <MenuItem onAction="#clearWorkspace" text="Clear workspace" />
                    <MenuItem onAction="#exit" text="Exit" />
                 </Menu>
                 <Menu>
                     <graphic>
-                        <ImageView fx:id="undo" fitHeight="18.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                    </graphic>
+                        <Button mnemonicParsing="false" onAction="#undo" text="Undo" />
+                        </graphic>
                 </Menu>
                 <Menu>
                     <graphic>
-                        <ImageView fx:id="redo" fitHeight="18.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                        <Button mnemonicParsing="false" onAction="#redo" text="Button" />
                     </graphic>
 
                 </Menu>
