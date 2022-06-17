@@ -2,6 +2,7 @@ package sample;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -16,7 +17,9 @@ public class Main extends Application {
         Scene scene =new Scene(root,Color.TRANSPARENT);
         scene.getStylesheets().add(getClass().getResource("Aplication.css").toExternalForm());
         //primaryStage.initStyle(StageStyle.TRANSPARENT);
+        scene.setCursor(Cursor.CROSSHAIR);
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> Controller.clearH());
 

@@ -27,7 +27,7 @@
 
                 <Menu text="File">
                    <MenuItem onAction="#save" text="Save" />
-                   <MenuItem onAction="#save" text="Save as" />
+                   <MenuItem onAction="#saveAs" text="Save as" />
                    <MenuItem onAction="#load" text="Open" />
                    <MenuItem onAction="#clearWorkspace" text="Clear workspace" />
                    <MenuItem onAction="#exit" text="Exit" />
@@ -60,11 +60,6 @@
                      <Insets left="25.0" right="3.0" />
                   </HBox.margin></Text>
                     <ColorPicker fx:id="colorPicker" />
-               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tools:">
-                  <HBox.margin>
-                     <Insets left="25.0" right="3.0" />
-                  </HBox.margin></Text>
-               <ComboBox fx:id="comboBox" prefWidth="150.0" promptText="Pen" />
                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Shapes:">
                   <HBox.margin>
                      <Insets left="25.0" right="3.0" />
