@@ -5,12 +5,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -58,10 +63,13 @@ public class Controller {
     @FXML
     private ImageView undo;
 
+
     public boolean pen = true;
     public static int history=0;
     public int u=0;
     public int r=0;
+    public  Thread thread;
+    Cursor c;
 
     public void initialize() {
         Image i=new Image(System.getProperty("user.dir")+"\\src\\res\\icons8-undo-60.png");
@@ -69,12 +77,15 @@ public class Controller {
         //undo.setImage(i);
         //redo.setImage(i0);
         GraphicsContext g = canvas.getGraphicsContext2D();
-        ObservableList<String> options = FXCollections.observableArrayList("Pen", "Highlighter", "spray", "crayon", "Text Writer");
-        comboBox.setItems(options);
+
         ObservableList<String> options2 = FXCollections.observableArrayList("Line", "Circle", "Elipse", "square");
         comboBox2.setItems(options2);
         ObservableList<String> options3 = FXCollections.observableArrayList("Square pen", "Circle pen");
         comboBox3.setItems(options3);
+        colorPicker.setValue(Color.BLACK);
+        //drawShapes(g);
+
+
 
         if (pen == true) {
             canvas.setOnMouseDragged(e -> {
@@ -141,26 +152,45 @@ public class Controller {
                 }
             });
         }
+
     }
+
+    /*private void drawShapes(GraphicsContext gc) {
+        gc.setFill(Color.GREEN);
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(5);
+        gc.strokeLine(40, 10, 10, 40);
+        gc.fillOval(10, 60, 30, 30);
+        gc.strokeOval(60, 60, 30, 30);
+        gc.fillRoundRect(110, 60, 30, 30, 10, 10);
+        gc.strokeRoundRect(160, 60, 30, 30, 10, 10);
+        gc.fillArc(10, 110, 30, 30, 45, 240, ArcType.OPEN);
+        gc.fillArc(60, 110, 30, 30, 45, 240, ArcType.CHORD);
+        gc.fillArc(110, 110, 30, 30, 45, 240, ArcType.ROUND);
+        gc.strokeArc(10, 160, 30, 30, 45, 240, ArcType.OPEN);
+        gc.strokeArc(60, 160, 30, 30, 45, 240, ArcType.CHORD);
+        gc.strokeArc(110, 160, 30, 30, 45, 240, ArcType.ROUND);
+        gc.fillPolygon(new double[]{10, 40, 10, 40},
+                new double[]{210, 210, 240, 240}, 4);
+        gc.strokePolygon(new double[]{60, 90, 60, 90},
+                new double[]{210, 210, 240, 240}, 4);
+        gc.strokePolyline(new double[]{110, 140, 110, 140},
+                new double[]{210, 210, 240, 240}, 4);
+    }*/
+
 
     public void pen() {
         if (comboBox3.getValue().equals("Circle pen")) {
             pen = false;
+            //canvas.getScene().setCursor(Cursor.CROSSHAIR);
             initialize();
         }
         if (comboBox3.getValue().equals("Square pen")) {
+           // canvas.getScene().setCursor(Cursor.CROSSHAIR);
             pen = true;
             initialize();
         }
     }
-   /** public void zoomIn(){
-        canvas.setScaleX(2);
-        canvas.setScaleY(2);
-    }
-    public void zoomOut(){
-        canvas.setScaleX(1);
-        canvas.setScaleY(1);
-    }**/
 
     public void setCanv() {
         if (!(Double.parseDouble(canvasW.getText())>4000||Double.parseDouble(canvasH.getText())>4000)){
@@ -187,13 +217,58 @@ public class Controller {
             System.out.println("Failed to save image"+e);
         }
     }
+    public void saveAs(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save File");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif")
+                );
+        fileChooser.setInitialFileName("Untitled");
+        Window stage = new Stage();
+
+
+        try {
+            WritableImage snapshot =canvas.snapshot(null,null);
+            File file = fileChooser.showSaveDialog(stage);
+            fileChooser.setInitialDirectory(file.getParentFile());
+            System.out.println(fileChooser.getSelectedExtensionFilter().getDescription());
+            System.out.println(file.getAbsolutePath());
+            ImageIO.write(SwingFXUtils.fromFXImage(snapshot,null), fileChooser.getSelectedExtensionFilter().getDescription(),new File(file.getAbsolutePath()));
+        }
+        catch (Exception e){System.out.println(e);}
+    }
+    public void load(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("SVG", "*.svg"));
+        Window stage = new Stage();
+        // WritableImage snapshot =canvas.snapshot(null,null);
+        try {
+            File file = fileChooser.showOpenDialog(stage);
+            GraphicsContext g = canvas.getGraphicsContext2D();
+            Image image= new Image(file.getPath());
+
+            if (image.getWidth()>canvas.getWidth() || image.getHeight()>canvas.getHeight()){
+                canvasW.setText(String.valueOf(image.getWidth()));
+                canvasH.setText(String.valueOf(image.getHeight()));
+                scrollPane.setMaxWidth(image.getWidth());
+                scrollPane.setMaxHeight(image.getHeight());
+                canvas.setHeight(image.getHeight());
+                canvas.setWidth(image.getWidth());
+                g.drawImage(image,0,0,image.getWidth(), image.getHeight());
+            }
+
+        }
+        catch (Exception e){System.out.println(e);}
+    }
+
     public void history(){
-
-        //System.out.println(u-r+"=="+0);
-            if (u-r==0){
                 history++;
-
-                    System.out.println(history+"hgyfcvgtfcvg");
                     try {
                         if (history<=20){
                             WritableImage snapshot =canvas.snapshot(null,null);
@@ -213,35 +288,7 @@ public class Controller {
                     }catch (Exception e){
                         System.out.println("Failed to save image"+e);
                     }
-                }
-
-
-            else {
-                System.out.println("cscscscscscscscscscscscscs: ");
-            for (int i = (history-u+r); i <= history; i++) {
-                try {
-                    Files.deleteIfExists(
-                            Paths.get(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+(i)+".png"));
-
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            history=history-u+r-1;
-            u=0;
-            r=0;
-                System.out.println(history);
-           history();
-            }
         }
-
-
-    public void load(){
-        GraphicsContext g = canvas.getGraphicsContext2D();
-        Image image= new Image("C:\\Users\\knutd\\IdeaProjects\\sceneB\\src\\Paint.jpg");
-        g.drawImage(image,0,0,600,600);
-    }
 
     public void exit(){
         clearH();
@@ -249,7 +296,7 @@ public class Controller {
     }
 
     public static void clearH(){
-        if (history<=20){
+        if (history<=20 && history!=0){
             for (int i = 0; i <history ; i++) {
                 try {
                     Files.deleteIfExists(
@@ -282,23 +329,27 @@ public class Controller {
             Image image= new Image(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+((history-u)+r)+".png");
             g.drawImage(image,0,0,image.getHeight(),image.getWidth());
         }
+        else {
+            u++;
+            clearWorkspace();
+        }
         //System.out.println("undo "+u+"u ,"+r+"r ,"+"an: "+((history-u)+r)+"|h: "+history);
     }
     public void redo(){
 
         GraphicsContext g = canvas.getGraphicsContext2D();
-        //System.out.println((history-u)+r);
         if ((history-u+r+1)<=history&&u!=0){
             r++;
             clearWorkspace();
             Image image= new Image(System.getProperty("user.dir")+"\\src\\sample\\saved\\h\\Paint"+((history-u)+r)+".png");
             g.drawImage(image,0,0,image.getHeight(),image.getWidth());
         }
-        //System.out.println("redo "+u+"u ,"+r+"r ,"+"an: "+((history-u)+r)+"|h: "+history);
+        //System.out.println("redo "+u+"u ,"+r+"r ,"+"an: "+((history-u)+r)+"|h: "+history);*/
     }
     public void clearWorkspace(){
         GraphicsContext g = canvas.getGraphicsContext2D();
         g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+       // clearH();
     }
 
     public void mouseMoved(javafx.scene.input.MouseEvent mouseEvent ) {
